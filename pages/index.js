@@ -7,10 +7,20 @@ import {
 } from 'reactstrap';
 import React, { useState } from 'react';
 
+import { githubApi } from '../services/githubApi';
 import HeadComponent from '../components/Head';
+import Results from '../components/Results';
+
+const parseUserData = ({ company, name }) => {
+  return {
+    company,
+    name
+  };
+};
 
 const Index = () => {
   const [loading, setLoading] = useState(false);
+  const [userData, setUserData] = useState();
   const [username, setUsername] = useState('');
 
   const handleChange = ({ target: { name, value } }) => {
@@ -20,7 +30,9 @@ const Index = () => {
   const handleSubmit = async event => {
     event.preventDefault();
     setLoading(true);
-    console.log('call service, username: ', username);
+    const response = await githubApi.searchForUser(username);
+    setUserData(parseUserData(response));
+    setLoading(false);
   };
 
   return (
@@ -44,9 +56,16 @@ const Index = () => {
           }
         </Form>
       </section>
+      <section>
+        <Results userData={userData} />
+      </section>
       <style jsx>{`
         main {
-          padding-top: 1em;
+          margin-top: 1em;
+        }
+
+        section:nth-child(2) {
+          margin-top: 1em;
         }
       `}</style>
     </main>
