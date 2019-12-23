@@ -11,28 +11,25 @@ import { githubApi } from '../services/githubApi';
 import HeadComponent from '../components/Head';
 import Results from '../components/Results';
 
-const parseUserData = ({ company, name }) => {
-  return {
-    company,
-    name
-  };
-};
-
 const Index = () => {
+  const [error, setError] = useState();
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState();
   const [username, setUsername] = useState('');
 
-  const handleChange = ({ target: { name, value } }) => {
-    name === 'username' ? setUsername(value) : null;
-  };
-
+  const handleChange = ({ target: { value } }) => setUsername(value);
   const handleSubmit = async event => {
     event.preventDefault();
+    setError(null);
     setLoading(true);
-    const response = await githubApi.searchForUser(username);
-    setUserData(parseUserData(response));
-    setLoading(false);
+    try {
+      const { company, login, name } = await githubApi.searchForUser(username);
+      setUserData({ company, login, name });
+      setLoading(false);
+    } catch(e) {
+      setError(e);
+      setLoading(false);
+    }
   };
 
   return (
@@ -50,14 +47,14 @@ const Index = () => {
               value={username}
             />
           </FormGroup>
-          { loading ?
-            <p>Loading...</p> :
-            <Button color='primary'>Search</Button>
-          }
+          <Button color='primary'>Search</Button>
         </Form>
       </section>
       <section>
-        <Results userData={userData} />
+        { loading ?
+          <p>Loading...</p> :
+          <Results error={error} userData={userData} />
+        }
       </section>
       <style jsx>{`
         main {

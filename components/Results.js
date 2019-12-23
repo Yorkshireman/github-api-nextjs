@@ -1,12 +1,17 @@
-import { ListGroup, ListGroupItem } from 'reactstrap';
+const Results = ({ error, userData }) => {
+  if (error) return <p>{error.message}</p>;
+  if (userData) {
+    const { company, login, name } = userData;
+    return (
+      <div>
+        <h1>{login}</h1>
+        <p>{name}</p>
+        <p>{company}</p>
+      </div>
+    );
+  }
 
-const Results = ({ userData }) => {
-  return userData &&
-    <ListGroup>
-      <ListGroupItem>Name: {userData.name}</ListGroupItem>
-      <ListGroupItem>Company: {userData.company}</ListGroupItem>
-    </ListGroup>
-  || null;
+  return null;
 };
 
 export default Results;
