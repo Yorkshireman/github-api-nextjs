@@ -63,6 +63,7 @@ const Index = () => {
       <ResultsContainer {...resultsProps} />
       <style jsx>{`
         main {
+          max-width: 500px;
           margin-top: 1em;
         }
       `}</style>

@@ -15,7 +15,7 @@ const UserProfile = ({ avatar_url, company, login, name }) => {
       </Row>
       <style jsx>{`
         img {
-          max-width: 95px;
+          max-width: 100px;
         }
 
         p {
