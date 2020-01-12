@@ -1,67 +1,68 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useState } from 'react';
+
 import {
   Button,
   Form,
   FormGroup,
   Input
 } from 'reactstrap';
-import React, { useState } from 'react';
 
 import { githubApi } from '../services/githubApi';
 import HeadComponent from '../components/Head';
-import Results from '../components/Results';
+import ResultsContainer from '../containers/ResultsContainer';
 
 const Index = () => {
-  const [error, setError] = useState();
-  const [loading, setLoading] = useState(false);
+  const [recentActivityData, setRecentActivity] = useState();
   const [userData, setUserData] = useState();
+  const [userDataError, setUserDataError] = useState();
+  const [userDataLoading, setUserDataLoading] = useState(false);
   const [username, setUsername] = useState('');
 
+  const fetchUserData = async () => {
+    const userData = await githubApi.searchForUser(username);
+    setUserData({ ...userData });
+    const recentActivityData = await githubApi.searchForRecentActivity(userData.login);
+    setRecentActivity({ ...recentActivityData });
+  };
+
   const handleChange = ({ target: { value } }) => setUsername(value);
+
   const handleSubmit = async event => {
     event.preventDefault();
-    setError(null);
-    setLoading(true);
     try {
-      const { company, login, name } = await githubApi.searchForUser(username);
-      setUserData({ company, login, name });
-      setLoading(false);
-    } catch(e) {
-      setError(e);
-      setLoading(false);
+      setUserDataError(null);
+      setUserDataLoading(true);
+      await fetchUserData();
+      setUserDataLoading(false);
+      setUsername('');
+    } catch (e) {
+      setUserDataError(e);
+      setUserDataLoading(false);
     }
   };
+
+  const resultsProps = { recentActivityData, userData, userDataError, userDataLoading };
 
   return (
     <main className='container'>
       <HeadComponent />
-      <section>
-        <Form onSubmit={handleSubmit}>
-          <FormGroup>
-            <Input
-              id='username'
-              name='username'
-              onChange={handleChange}
-              placeholder='Github username'
-              type='text'
-              value={username}
-            />
-          </FormGroup>
-          <Button color='primary'>Search</Button>
-        </Form>
-      </section>
-      <section>
-        { loading ?
-          <p>Loading...</p> :
-          <Results error={error} userData={userData} />
-        }
-      </section>
+      <Form onSubmit={handleSubmit}>
+        <FormGroup>
+          <Input
+            id='username'
+            name='username'
+            onChange={handleChange}
+            placeholder='Github username'
+            type='text'
+            value={username}
+          />
+        </FormGroup>
+        <Button color='primary'>Search</Button>
+      </Form>
+      <ResultsContainer {...resultsProps} />
       <style jsx>{`
         main {
-          margin-top: 1em;
-        }
-
-        section:nth-child(2) {
           margin-top: 1em;
         }
       `}</style>
