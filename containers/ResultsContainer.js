@@ -1,4 +1,4 @@
-import { Button } from 'reactstrap';
+import { Alert } from 'reactstrap';
 import RecentActivity from '../components/RecentActivity';
 import UserProfile from '../components/UserProfile';
 
@@ -17,9 +17,9 @@ const ResultsContainer = ({ recentActivityData, userData, userDataError, userDat
       <UserProfile avatar_url={avatar_url} company={company} login={login} name={name} />
       {filteredRecentActivityData.length ?
         <RecentActivity {...filteredRecentActivityData} /> :
-        <Button color='warning' style={{ marginBottom: '1rem' }}>
+        <Alert color='warning'>
           No Recent Pushes or Pull Request events
-        </Button>}
+        </Alert>}
       <style jsx>{`
         div {
           margin-top: 1em;
