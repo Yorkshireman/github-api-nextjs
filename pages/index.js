@@ -47,21 +47,27 @@ const Index = () => {
   return (
     <main className='container'>
       <HeadComponent />
-      <Form onSubmit={handleSubmit}>
-        <FormGroup>
-          <Input
-            id='username'
-            name='username'
-            onChange={handleChange}
-            placeholder='Github username'
-            type='text'
-            value={username}
-          />
-        </FormGroup>
-        <Button color='primary'>Search</Button>
-      </Form>
+      <section id='search-form'>
+        <Form onSubmit={handleSubmit}>
+          <FormGroup>
+            <Input
+              id='username'
+              name='username'
+              onChange={handleChange}
+              placeholder='Github username'
+              type='text'
+              value={username}
+            />
+          </FormGroup>
+          <Button color='primary'>Search</Button>
+        </Form>
+      </section>
       <ResultsContainer {...resultsProps} />
       <style jsx>{`
+        #search-form {
+          margin-bottom: 1em;
+        }
+
         main {
           max-width: 500px;
           margin-top: 1em;

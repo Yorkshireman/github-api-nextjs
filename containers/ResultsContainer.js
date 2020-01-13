@@ -1,11 +1,12 @@
 import { Alert } from 'reactstrap';
+import LoadingSpinner from '../components/LoadingSpinner';
 import RecentActivity from '../components/RecentActivity';
 import UserProfile from '../components/UserProfile';
 
 const ResultsContainer = ({ recentActivityData, userData, userDataError, userDataLoading }) => {
   if ((!userData || !recentActivityData) && !userDataError && !userDataLoading) return null;
-  if (userDataError) return <p>{userDataError.message}</p>;
-  if (userDataLoading) return <p>Loading...</p>;
+  if (userDataError) return <Alert color='danger'>{userDataError.message}</Alert>;
+  if (userDataLoading) return <LoadingSpinner />;
 
   const { avatar_url, company, login, name } = userData;
 
@@ -20,11 +21,6 @@ const ResultsContainer = ({ recentActivityData, userData, userDataError, userDat
         <Alert color='warning'>
           No Recent Pushes or Pull Request events
         </Alert>}
-      <style jsx>{`
-        div {
-          margin-top: 1em;
-        }
-      `}</style>
     </div>
   );
 };
