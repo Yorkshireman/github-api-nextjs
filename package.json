@@ -12,6 +12,7 @@
     "url": "git+https://github.com/Yorkshireman/github-api-nextjs.git"
   },
   "scripts": {
+    "build": "next build && next export",
     "dev": "next",
     "lint": "eslint \"./**/*.js\"",
     "test": "jest",
