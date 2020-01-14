@@ -1,4 +1,4 @@
 babel.config.js
 next.config.js
 out
-tests/mocks/styleMock.js
+tests/__mocks__/styleMock.js

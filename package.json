@@ -38,7 +38,7 @@
   },
   "jest": {
     "moduleNameMapper": {
-      "\\.css$": "<rootDir>/tests/mocks/styleMock.js"
+      "\\.css$": "<rootDir>/tests/__mocks__/styleMock.js"
     },
     "setupFilesAfterEnv": [
       "@testing-library/jest-dom/extend-expect"
