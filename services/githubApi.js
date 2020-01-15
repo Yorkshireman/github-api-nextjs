@@ -5,8 +5,19 @@ const method = 'GET';
 const headers = { 'Accept': 'application/vnd.github.v3+json' };
 
 const githubApi = {
-  searchForRecentActivity: async username => {
+  fetchRecentActivity: async username => {
     const url = `${baseUrl}/users/${username}/events/public`;
+    const response = await fetch(url, { headers, method });
+
+    if (!response.ok) {
+      const message = await response.text();
+      throw new RemoteServiceError(response.status, message);
+    }
+
+    return await response.json();
+  },
+  fetchUserRepos: async username => {
+    const url = `${baseUrl}/users/${username}/repos?sort=updated&visibility=public`;
     const response = await fetch(url, { headers, method });
 
     if (!response.ok) {

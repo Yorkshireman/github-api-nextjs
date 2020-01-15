@@ -9,11 +9,11 @@ import {
 } from 'reactstrap';
 
 import { githubApi } from '../services/githubApi';
-import HeadComponent from '../components/Head';
-import ResultsContainer from '../containers/ResultsContainer';
+import { HeadComponent, Results } from '../components';
 
 const Index = () => {
   const [recentActivityData, setRecentActivity] = useState();
+  const [reposData, setReposData] = useState();
   const [userData, setUserData] = useState();
   const [userDataError, setUserDataError] = useState();
   const [userDataLoading, setUserDataLoading] = useState(false);
@@ -22,8 +22,14 @@ const Index = () => {
   const fetchUserData = async () => {
     const userData = await githubApi.searchForUser(username);
     setUserData({ ...userData });
-    const recentActivityData = await githubApi.searchForRecentActivity(userData.login);
+
+    const [recentActivityData, reposData] = await Promise.all([
+      githubApi.fetchRecentActivity(userData.login),
+      githubApi.fetchUserRepos(username)
+    ]);
+
     setRecentActivity({ ...recentActivityData });
+    setReposData({ ...reposData });
   };
 
   const handleChange = ({ target: { value } }) => setUsername(value);
@@ -42,7 +48,7 @@ const Index = () => {
     }
   };
 
-  const resultsProps = { recentActivityData, userData, userDataError, userDataLoading };
+  const resultsProps = { recentActivityData, reposData, userData, userDataError, userDataLoading };
 
   return (
     <main className='container'>
@@ -62,14 +68,14 @@ const Index = () => {
           <Button color='primary'>Search</Button>
         </Form>
       </section>
-      <ResultsContainer {...resultsProps} />
+      <Results {...resultsProps} />
       <style jsx>{`
         #search-form {
           margin-bottom: 1em;
         }
 
         main {
-          max-width: 500px;
+          max-width: 380px;
           margin-top: 1em;
         }
       `}</style>

@@ -3,8 +3,14 @@ import { Spinner } from 'reactstrap';
 const LoadingSpinner = () => {
   const spinnerSize = '6rem';
   return (
-    <div style={{ margin: '0 auto', width: `${spinnerSize}` }}>
+    <div>
       <Spinner color='primary' style={{ width: `${spinnerSize}`, height: `${spinnerSize}` }} />
+      <style jsx>{`
+        div {
+          margin: 0 auto;
+          width: ${spinnerSize}
+        }
+      `}</style>
     </div>
   );
 };

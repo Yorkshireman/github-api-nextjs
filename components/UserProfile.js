@@ -2,7 +2,7 @@ import { Col, Row } from 'reactstrap';
 
 const UserProfile = ({ avatar_url, company, login, name }) => {
   return (
-    <section id='user-profile'>
+    <section>
       <Row>
         <Col xs='4'>
           <img src={avatar_url} />
@@ -22,7 +22,7 @@ const UserProfile = ({ avatar_url, company, login, name }) => {
           margin-bottom: 0;
         }
 
-        #user-profile {
+        section {
           margin-bottom: 1em;
         }
       `}</style>

@@ -12,11 +12,12 @@ const PullRequestCard = ({
     name
   }
 }) => {
+  const createdAtDate = new Date(created_at).toDateString();
   return (
     <Card>
       <CardBody style={{ padding: '0.75rem' }}>
         <CardTitle>Pull Request event: {action}</CardTitle>
-        <CardSubtitle>{new Date(created_at).toDateString()}</CardSubtitle>
+        <CardSubtitle>{createdAtDate}</CardSubtitle>
         <CardText>repo: {name}</CardText>
         <CardLink href={href} target='_blank'>View in Github</CardLink>
       </CardBody>

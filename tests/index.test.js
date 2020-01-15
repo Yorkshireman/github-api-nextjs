@@ -5,6 +5,7 @@ import Index from '../pages/index';
 import RemoteServiceError from '../errors/RemoteServiceError';
 import { usersSearch } from './fixtures/users-search';
 import { recentActivityData } from './fixtures/recent-activity';
+import { userRepos } from './fixtures/user-repos';
 
 jest.mock('../services/githubApi');
 
@@ -26,7 +27,8 @@ describe('index page', () => {
       wrapper = render(<Index />);
       const searchButton = wrapper.getByText('Search');
       githubApi.searchForUser.mockReturnValue(usersSearch);
-      githubApi.searchForRecentActivity.mockReturnValue(recentActivityData);
+      githubApi.fetchRecentActivity.mockReturnValue(recentActivityData);
+      githubApi.fetchUserRepos.mockReturnValue(userRepos);
       fireEvent.click(searchButton);
       await wait();
     });
@@ -43,10 +45,28 @@ describe('index page', () => {
       expect(wrapper.getByText('Andrew Stelmach')).toBeVisible();
     });
 
+    describe('Public Repositories', () => {
+      userRepos.slice(0, 2).forEach(repo => { // first 3 to shorten test run time
+        test('displays name', () => {
+          expect(wrapper.getByText(repo.name)).toBeVisible();
+        });
+
+        test('displays date when created', () => {
+          const expectedDate = new Date(repo.created_at).toDateString();
+          expect(wrapper.getByText(`created ${expectedDate}`)).toBeVisible();
+        });
+
+        test('displays date last updated', () => {
+          const expectedDate = new Date(repo.updated_at).toDateString();
+          expect(wrapper.getByText(`last updated ${expectedDate}`)).toBeVisible();
+        });
+      });
+    });
+
     describe('when viewing Recent Activity', () => {
       beforeEach(async () => {
-        const openRecentActivityButton = wrapper.getByText('Open Recent Activity');
-        fireEvent.click(openRecentActivityButton);
+        const recentActivityTab = wrapper.getByText('Recent Activity');
+        fireEvent.click(recentActivityTab);
       });
 
       describe('PullRequestEvent', () => {
@@ -79,6 +99,32 @@ describe('index page', () => {
     });
   });
 
+  // app has not been expanded to handle all event types yet
+  describe('when no usable recent activity is found', () => {
+    let wrapper;
+    beforeEach(async () => {
+      wrapper = render(<Index />);
+      const searchButton = wrapper.getByText('Search');
+      githubApi.searchForUser.mockReturnValue(usersSearch);
+      githubApi.fetchRecentActivity.mockReturnValue([
+        {
+          type: 'ForkEvent'
+        },
+        {
+          type: 'CreateEvent'
+        }
+      ]);
+      fireEvent.click(searchButton);
+      await wait();
+      const recentActivityTab = wrapper.getByText('Recent Activity');
+      fireEvent.click(recentActivityTab);
+    });
+
+    test('No Recent Activity text is displayed', () => {
+      expect(wrapper.getByText('No recent Pushes or Pull Request events')).toBeVisible();
+    });
+  });
+
   describe('when no user is found', () => {
     let wrapper;
     beforeEach(async () => {
@@ -95,30 +141,6 @@ describe('index page', () => {
     test('User not found message is displayed', () => {
       const { getByText } = render(<Index />);
       expect(getByText('User not found, please try again')).toBeVisible();
-    });
-  });
-
-  // app has not been expanded to handle all event types yet
-  describe('when no usable recent activity is found', () => {
-    let wrapper;
-    beforeEach(async () => {
-      wrapper = render(<Index />);
-      const searchButton = wrapper.getByText('Search');
-      githubApi.searchForUser.mockReturnValue(usersSearch);
-      githubApi.searchForRecentActivity.mockReturnValue([
-        {
-          type: 'ForkEvent'
-        },
-        {
-          type: 'CreateEvent'
-        }
-      ]);
-      fireEvent.click(searchButton);
-      await wait();
-    });
-
-    test('No Recent Activity text is displayed', () => {
-      expect(wrapper.getByText('No Recent Pushes or Pull Request events')).toBeVisible();
     });
   });
 });

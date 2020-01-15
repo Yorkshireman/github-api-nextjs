@@ -1,13 +1,6 @@
-import { useState } from 'react';
-
-import { Button, Collapse } from 'reactstrap';
-import PushEventCard from './PushEventCard';
-import PullRequestCard from './PullRequestCard';
+import { PushEventCard, PullRequestCard } from './index';
 
 const RecentActivity = data => {
-  const [collapse, setCollapse] = useState(false);
-  const toggle = () => setCollapse(!collapse);
-
   const cards = Object.values(data).map(event => {
     let card;
     switch (event.type) {
@@ -19,26 +12,26 @@ const RecentActivity = data => {
     }
 
     return (
-      <div key={event.id} style={{ marginBottom: '0.125em' }}>
+      <div key={event.id}>
         {card}
+        <style jsx>{`
+          div {
+            margin-bottom: 0.125em;
+          }
+        `}</style>
       </div>
     );
   });
 
   return (
     <section>
-      <Button color='primary' onClick={toggle}>
-        Open Recent Activity
-      </Button>
       <p>(push events and pull request events only)</p>
-      <Collapse isOpen={collapse}>
-        {cards}
-      </Collapse>
+      {cards}
       <style jsx>{`
         p {
           font-size: 0.85em;
-          margin-bottom: 0.5em;
-          margin-top: 0.5em;
+          margin: 0.5em 0 0.6em 0;
+          text-align: center;
         }
       `}</style>
     </section>
